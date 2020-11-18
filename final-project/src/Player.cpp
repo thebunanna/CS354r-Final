@@ -25,14 +25,21 @@ void Player::_ready(){
 }
 
 void Player::_process(float delta) {
-    time_passed += delta;
+    //time_passed += delta;
 
+    ray = Object::cast_to<RayCast2D>(RayCast2D::___get_from_variant(get_node("MainCast")));
     Vector2 position = get_position();
 
-    position += movespeed * movedir * delta;
+    if(ray->is_colliding()){
+        position = last_pos;
+        target_pos = last_pos;
 
-    if(position.distance_to(last_pos) >= tile_size - movespeed * delta)
-        position = target_pos;
+    }else{
+        position += movespeed * movedir * delta;
+
+        if(position.distance_to(last_pos) >= tile_size - movespeed * delta)
+            position = target_pos;
+    }
 
     if(position == target_pos){
         get_movedir();
@@ -61,4 +68,7 @@ void Player::get_movedir(){
     if(movedir.x == 0 && movedir.y == 0)
         movedir = Vector2(0,0);
 
+    if(movedir != Vector2(0,0))
+        ray->set_cast_to(movedir * tile_size / 2);
+    
 }

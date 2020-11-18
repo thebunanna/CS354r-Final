@@ -4,6 +4,7 @@
 #include <Godot.hpp>
 #include <Sprite.hpp>
 #include <Input.hpp>
+#include <RayCast2D.hpp>
 
 namespace godot {
 
@@ -20,6 +21,8 @@ namespace godot {
         Vector2 last_pos;
         Vector2 target_pos;
         Vector2 movedir;
+
+        RayCast2D* ray;
 
         void get_movedir();
 

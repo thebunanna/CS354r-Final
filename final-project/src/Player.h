@@ -4,6 +4,7 @@
 #include <Godot.hpp>
 #include <Sprite.hpp>
 #include <Input.hpp>
+#include <InputEvent.hpp>
 #include <RayCast2D.hpp>
 
 namespace godot {
@@ -16,7 +17,7 @@ namespace godot {
 
         int tile_size = 64;
 
-        float movespeed = 256;
+        float movespeed = 8;
 
         Vector2 last_pos;
         Vector2 target_pos;
@@ -25,6 +26,8 @@ namespace godot {
         RayCast2D* ray;
 
         void get_movedir();
+
+        bool still_moving();
 
     public:
         static void _register_methods();
@@ -37,6 +40,8 @@ namespace godot {
         void _ready();
 
         void _process(float delta);
+
+        //void _input(Variant e);
     };
 
 }

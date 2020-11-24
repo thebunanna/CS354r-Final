@@ -22,7 +22,7 @@ void Enemy::_init() {
 }
 
 void Enemy::_ready(){
-    set_position(Vector2(640, 256).snapped(Vector2(tile_size, tile_size)));
+    set_position(Vector2(256, 256).snapped(Vector2(tile_size, tile_size)));
     target_pos = get_position();
     last_pos = get_position();
 }

@@ -7,16 +7,17 @@
 #include <Panel.hpp>
 #include <StyleBoxFlat.hpp>
 
+
 namespace godot {
+    class InvItem;
 
     class InvSlot : public Panel {
         GODOT_CLASS(InvSlot, Panel)
 
     private:
         uint slot_num;
-        String item;
+        InvItem* item;
         StyleBoxFlat* style;
-
     public:
         static void _register_methods();
 
@@ -24,13 +25,18 @@ namespace godot {
         ~InvSlot();
 
         void _init();
-        void _init(String _name); // our initializer called by Godot
+        void _init(uint num); // our initializer called by Godot
 
         void _ready();
         void refreshColors();
 
         void on_mouse_enter();
         void on_mouse_exit();
+
+        bool get_empty();
+
+        void set_item(InvItem* newitem);
+
     };
 
 }

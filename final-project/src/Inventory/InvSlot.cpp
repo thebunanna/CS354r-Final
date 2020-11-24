@@ -1,5 +1,7 @@
 #include "InvSlot.h"
 #include <Label.hpp>
+#include "InvItem.h"
+
 using namespace godot;
 
 void InvSlot::_register_methods() {
@@ -17,17 +19,18 @@ InvSlot::~InvSlot() {
     // add your cleanup here
 }
 void InvSlot::_init() {
-    _init ("");
+    _init (0);
 }
-void InvSlot::_init(String _name) {
+void InvSlot::_init(uint num) {
     // initialize any variables here
-    item = _name;
+    slot_num = num;
     set_custom_minimum_size(Vector2(34,34));
+    item = NULL;
 }
 
 void InvSlot::_ready(){
     Label* temp = Label::_new();
-    temp->set_text (item);
+    temp->set_text (String::num(slot_num));
     add_child (temp);
 
     style = StyleBoxFlat::_new();
@@ -37,8 +40,6 @@ void InvSlot::_ready(){
     connect ("mouse_entered", this, "on_mouse_enter");
     connect ("mouse_exited", this, "on_mouse_exit");
 }
-
-
 
 void InvSlot::refreshColors() {
 	// if item:
@@ -57,3 +58,19 @@ void InvSlot::on_mouse_enter () {
 void InvSlot::on_mouse_exit () {
     refreshColors ();
 }
+
+bool InvSlot::get_empty () {
+    return item == NULL; 
+}
+
+void InvSlot::set_item(InvItem* newItem) {
+    
+    add_child(newItem);
+
+	item = newItem;
+    
+	item->set_slot(this);
+
+	refreshColors();
+}
+	

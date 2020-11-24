@@ -7,13 +7,16 @@
 #include <Panel.hpp>
 #include <InputEvent.hpp>
 
+#include "InvItem.h"
+#include "InvSlot.h"
+
 namespace godot {
 
     class Inventory : public Panel {
         GODOT_CLASS(Inventory, Panel)
 
     private:
-        uint slots;
+        uint max_slots;
         Array items;
 
     public:
@@ -29,6 +32,10 @@ namespace godot {
         void _process(float delta);
 
         void _input (InputEvent * event);
+
+        int get_next_empty();
+
+        void add_item (InvItem* item);
     };
 
 }

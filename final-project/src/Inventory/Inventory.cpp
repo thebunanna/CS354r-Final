@@ -1,14 +1,16 @@
 #include "Inventory.h"
-#include "InvSlot.h"
 #include <InputEventKey.hpp>
 #include <SceneTree.hpp>
+#include <ResourceLoader.hpp>
+
+
 using namespace godot;
 
 void Inventory::_register_methods() {
     register_method("_process", &Inventory::_process);
     register_method("_ready", &Inventory::_ready);
     register_method("_input", &Inventory::_input);
-
+    register_method("get_next_empty", &Inventory::get_next_empty);
 }
 
 Inventory::Inventory() {
@@ -19,28 +21,37 @@ Inventory::~Inventory() {
 }
 
 void Inventory::_init() {
-    slots = 20;
+    max_slots = 20;
     // initialize any variables here
 }
 
 void Inventory::_ready(){
     items = Array();
-    items.resize(slots);
+    items.resize(max_slots);
     
     Node* gui_slots = get_node(NodePath("SlotContainer/InventorySlots"));
     
-    for (int i = 0; i < slots; i++) {
+    for (int i = 0; i < max_slots; i++) {
 
         InvSlot* it = InvSlot::_new();
-        it->_init(String::num(i));
+        it->_init(i);
+
         items[i] = it;
         gui_slots->add_child(it);
     }
-    
+
+    //ResourceLoader* resourceLoader = ResourceLoader::get_singleton();
+    //Ref<Texture> text = resourceLoader->load("res://images/W_Sword001.png");
+
+    //InvItem* item = InvItem::_new();
+    //item->_init();
+    // item->_init(text);
+    //add_item (item);
+
 }
 
 void Inventory::_process(float delta) {
-
+    
 }
 
 void Inventory::_input (InputEvent *event) {
@@ -52,4 +63,21 @@ void Inventory::_input (InputEvent *event) {
         get_tree()->set_input_as_handled();
     }
     
+}
+
+int Inventory::get_next_empty () {
+    for (int i = 0; i < max_slots; i++) {
+        InvSlot* it = Object::cast_to<InvSlot>(items[i]);
+        if (it->get_empty())
+            return i;
+    }
+    return -1;
+}
+
+void Inventory::add_item (InvItem* item) {
+    int slot_idx = get_next_empty ();
+    if (slot_idx != -1) {
+        InvSlot* it = Object::cast_to<InvSlot>(items[slot_idx]);
+        it->set_item(item);
+    }
 }

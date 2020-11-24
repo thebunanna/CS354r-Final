@@ -4,6 +4,7 @@ using namespace godot;
 
 void Player::_register_methods() {
     register_method("_process", &Player::_process);
+    register_method("_ready", &Player::_ready);
     //register_method("_input", &Player::_input);
 }
 
@@ -20,7 +21,7 @@ void Player::_init() {
 }
 
 void Player::_ready(){
-    set_position(get_position().snapped(Vector2(tile_size, tile_size)));
+    set_position(Vector2(64,64).snapped(Vector2(tile_size, tile_size)));
     last_pos = get_position();
     target_pos = get_position();
 }

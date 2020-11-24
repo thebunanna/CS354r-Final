@@ -3,6 +3,7 @@
 
 #include <Godot.hpp>
 #include <TileMap.hpp>
+#include <TileSet.hpp>
 
 namespace godot {
 
@@ -10,6 +11,8 @@ namespace godot {
         GODOT_CLASS(Map, TileMap)
 
     private:
+        bool flag;
+
     public:
         static void _register_methods();
 
@@ -19,6 +22,8 @@ namespace godot {
         void _init(); // our initializer called by Godot
 
         void _ready();
+
+        void generate();
 
         void _process(float delta);
     };

@@ -15,7 +15,7 @@ namespace godot {
         GODOT_CLASS(InvSlot, Panel)
 
     private:
-        uint slot_num;
+        int slot_num;
         InvItem* item;
         StyleBoxFlat* style;
     public:
@@ -25,7 +25,7 @@ namespace godot {
         ~InvSlot();
 
         void _init();
-        void _init(uint num); // our initializer called by Godot
+        void _init(int num); // our initializer called by Godot
 
         void _ready();
         void refreshColors();

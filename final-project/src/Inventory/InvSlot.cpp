@@ -21,7 +21,7 @@ InvSlot::~InvSlot() {
 void InvSlot::_init() {
     _init (0);
 }
-void InvSlot::_init(uint num) {
+void InvSlot::_init(int num) {
     // initialize any variables here
     slot_num = num;
     set_custom_minimum_size(Vector2(34,34));

@@ -45,3 +45,6 @@ data_*/
 *.exe
 *.out
 *.app
+
+# Editors
+.vs/

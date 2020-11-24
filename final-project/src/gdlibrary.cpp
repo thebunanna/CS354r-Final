@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "Map.h"
 
 #include "Inventory/Inventory.h"
 #include "Inventory/InvSlot.h"
@@ -17,4 +18,5 @@ extern "C" void GDN_EXPORT godot_nativescript_init(void *handle) {
     godot::register_class<godot::Inventory>();
     godot::register_class<godot::InvSlot>();
 
+    godot::register_class<godot::Map>();
 }

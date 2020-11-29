@@ -62,7 +62,7 @@ void Player::_process(float delta) {
             target_pos += movedir * tile_size;
         }
 
-        set_position(position);
+        set_position();
     }
 
 }

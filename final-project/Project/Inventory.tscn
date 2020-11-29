@@ -2,7 +2,7 @@
 
 [ext_resource path="res://bin/Inventory.gdns" type="Script" id=1]
 
-[node name="Control" type="CanvasLayer"]
+[node name="Inventory" type="CanvasLayer"]
 
 [node name="Control" type="Panel" parent="."]
 anchor_left = 0.768

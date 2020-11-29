@@ -19,6 +19,8 @@ namespace godot {
         int max_slots;
         Array items;
 
+        InvItem* heldItem = nullptr;
+        
     public:
         static void _register_methods();
 
@@ -36,6 +38,8 @@ namespace godot {
         int get_next_empty();
 
         void add_item (InvItem* item);
+
+        void slot_gui_event (InputEvent* e, InvSlot* slot);
     };
 
 }

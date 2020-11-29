@@ -1,7 +1,10 @@
 #include "InvSlot.h"
-#include <Label.hpp>
 #include "InvItem.h"
 
+#include <SceneTree.hpp>
+#include <Node.hpp>
+#include <Label.hpp>
+#include <Viewport.hpp>
 using namespace godot;
 
 void InvSlot::_register_methods() {
@@ -74,3 +77,38 @@ void InvSlot::set_item(InvItem* newItem) {
 	refreshColors();
 }
 	
+InvItem* InvSlot::pick_item () {
+    if (item == nullptr) return nullptr;
+    
+    item->pick_item();
+	remove_child(item);
+    
+	get_node(NodePath("/root/Main/Inventory"))->add_child(item);    
+	refreshColors();
+
+    InvItem* temp = item;
+    item = nullptr;
+    return temp;
+}
+
+bool InvSlot::put_item(InvItem* newItem) {
+    if (item != nullptr) return false;
+	item = newItem;
+    item->set_slot (this);
+    item->put_item();
+
+    get_node(NodePath("/root/Main/Inventory"))->remove_child(item);
+    add_child(newItem);
+
+	refreshColors();
+
+    return true;
+}
+
+bool InvSlot::remove_item () {
+    if (item == nullptr) return false;
+    remove_child(item);
+	item = nullptr;
+	refreshColors();
+    return true;
+}

@@ -47,7 +47,7 @@ points = PoolVector2Array( 0, 0, 64, 0, 64, 64, 0, 64 )
 
 [node name="Main" type="Node2D"]
 
-[node name="Control" parent="." instance=ExtResource( 3 )]
+[node name="Inventory" parent="." instance=ExtResource( 3 )]
 
 [node name="Player" parent="." instance=ExtResource( 1 )]
 

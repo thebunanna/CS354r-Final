@@ -16,7 +16,7 @@ namespace godot {
         GODOT_CLASS(Inventory, Panel)
 
     private:
-        uint max_slots;
+        int max_slots;
         Array items;
 
         InvItem* heldItem = nullptr;

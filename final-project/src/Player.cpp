@@ -18,6 +18,7 @@ Player::~Player() {
 void Player::_init() {
     // initialize any variables here
     time_passed = 0.0;
+    velocity = Vector2();
 }
 
 void Player::_ready(){
@@ -29,41 +30,78 @@ void Player::_ready(){
 void Player::_process(float delta) {
     time_passed += delta;
 
-    //120 fps
-    if(time_passed >= 0.0083333){
-        time_passed = 0.0;
+    Vector2 direction = Vector2(0,0);
 
-        ray = Object::cast_to<RayCast2D>(RayCast2D::___get_from_variant(get_node("MainCast")));
-        Vector2 position = get_position();
+    if(Input::get_singleton()->is_action_pressed("move_up"))
+        direction.y -= 1;
+    else if(Input::get_singleton()->is_action_pressed("move_down"))
+        direction.y += 1;
+    else if(Input::get_singleton()->is_action_pressed("move_left"))
+        direction.x -= 1;
+    else if(Input::get_singleton()->is_action_pressed("move_right"))
+        direction.x += 1;
 
-        if(ray->is_colliding()){
-            position = last_pos;
-            target_pos = last_pos;
 
-        }else{
-            position += movespeed * movedir;
-
-            if(position.distance_to(last_pos) >= tile_size - movespeed){
-                //position = target_pos;
-
-                if(still_moving()){
-                    last_pos = target_pos;
-                    target_pos += movedir * tile_size;
-                }else{
-                    position = target_pos;
-                }
-            }
-                
-        }
-
-        if(position == target_pos){
-            get_movedir();
-            last_pos = position;
-            target_pos += movedir * tile_size;
-        }
-
-        set_position(position);
+    if(!is_moving && direction != Vector2()){
+        Godot::print("in 1");
+        movedir = direction.normalized();
+        is_moving = true;   
     }
+
+
+    if(is_moving){
+        
+        speed = MAX_SPEED;
+        velocity = speed * movedir * delta;
+
+        float distance_to_target = get_position().distance_to(target_pos);
+        float move_distance = velocity.length();
+
+        if(distance_to_target < move_distance){
+            velocity = target_pos * distance_to_target;
+            is_moving = false; 
+        }
+
+        move_and_collide(velocity);
+    }
+
+
+
+    //120 fps
+    // if(time_passed >= 0.0083333){
+    //     time_passed = 0.0;
+
+    //     ray = Object::cast_to<RayCast2D>(RayCast2D::___get_from_variant(get_node("MainCast")));
+    //     Vector2 position = get_position();
+
+    //     if(ray->is_colliding()){
+    //         position = last_pos;
+    //         target_pos = last_pos;
+
+    //     }else{
+    //         position += movespeed * movedir;
+
+    //         if(position.distance_to(last_pos) >= tile_size - movespeed){
+    //             //position = target_pos;
+
+    //             if(still_moving()){
+    //                 last_pos = target_pos;
+    //                 target_pos += movedir * tile_size;
+    //             }else{
+    //                 position = target_pos;
+    //             }
+    //         }
+                
+    //     }
+
+    //     if(position == target_pos){
+    //         get_movedir();
+    //         last_pos = position;
+    //         target_pos += movedir * tile_size;
+    //     }
+
+    //     set_position(position);
+    // }
 
 }
 
@@ -92,25 +130,27 @@ bool Player::still_moving(){
 }
 
 
-void Player::get_movedir(){
+Vector2 Player::get_movedir(){
 
-    movedir = Vector2(0,0);
+    Vector2 direction = Vector2(0,0);
 
     if(Input::get_singleton()->is_action_pressed("move_up"))
-        movedir.y -= 1;
+        direction.y -= 1;
     else if(Input::get_singleton()->is_action_pressed("move_down"))
-        movedir.y += 1;
+        direction.y += 1;
     else if(Input::get_singleton()->is_action_pressed("move_left"))
-        movedir.x -= 1;
+        direction.x -= 1;
     else if(Input::get_singleton()->is_action_pressed("move_right"))
-        movedir.x += 1;
+        direction.x += 1;
 
     //makes sure you can't move diagonally
-    if(movedir.x != 0 && movedir.y != 0)
-        movedir = Vector2(0,0);
+    // if(movedir.x != 0 && movedir.y != 0)
+    //     movedir = Vector2(0,0);
 
-    if(movedir != Vector2(0,0))
-        ray->set_cast_to(movedir * tile_size / 2);
+    // if(movedir != Vector2(0,0))
+    //     ray->set_cast_to(movedir * tile_size / 2);
+
+    return direction.normalized();
     
 }
 

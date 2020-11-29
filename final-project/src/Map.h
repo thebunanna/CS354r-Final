@@ -31,6 +31,8 @@ namespace godot {
     public:
         static void _register_methods();
 
+        
+
         Map();
         ~Map();
 

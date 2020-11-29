@@ -106,7 +106,7 @@ void Player::get_movedir(){
         movedir.x += 1;
 
     //makes sure you can't move diagonally
-    if(movedir.x == 0 && movedir.y == 0)
+    if(movedir.x != 0 && movedir.y != 0)
         movedir = Vector2(0,0);
 
     if(movedir != Vector2(0,0))

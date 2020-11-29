@@ -4,6 +4,7 @@
 #include <Godot.hpp>
 #include <TileMap.hpp>
 #include <TileSet.hpp>
+#include <AStar2D.hpp>
 
 namespace godot {
 
@@ -12,6 +13,20 @@ namespace godot {
 
     private:
         bool flag;
+        Vector2 map_size;
+
+        Array obstacles;
+        AStar2D* astar;
+
+        int tile_size = 64;
+
+
+        Array astar_add_walkable_cells(Array obs);
+        void astar_connect_walkable_cells(Array points);
+        int calculate_point_index(Vector2 point);
+        bool is_outside_map_bounds(Vector2 point);
+        
+
 
     public:
         static void _register_methods();
@@ -24,6 +39,8 @@ namespace godot {
         void _ready();
 
         void generate();
+
+        PoolVector2Array get_path(Vector2 start, Vector2 end);
 
         void _process(float delta);
     };

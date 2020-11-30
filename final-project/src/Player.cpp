@@ -6,6 +6,8 @@ void Player::_register_methods() {
     register_method("_process", &Player::_process);
     register_method("_ready", &Player::_ready);
     //register_method("_input", &Player::_input);
+    register_signal<Player>((char *)"health_changed", "health", GODOT_VARIANT_TYPE_VECTOR2);
+
 }
 
 Player::Player() {
@@ -18,12 +20,15 @@ Player::~Player() {
 void Player::_init() {
     // initialize any variables here
     time_passed = 0.0;
+    maxHealth = 100;
+    curHealth = 0;
 }
 
 void Player::_ready(){
     set_position(Vector2(64,64).snapped(Vector2(tile_size, tile_size)));
     last_pos = get_position();
     target_pos = get_position();
+    modify_health(50);
 }
 
 void Player::_process(float delta) {
@@ -114,6 +119,14 @@ void Player::get_movedir(){
     
 }
 
+float Player::get_cur_health () {
+    return curHealth;
+}
+void Player::modify_health (float delta) {
+    curHealth += delta;
+    emit_signal("health_changed", Vector2(curHealth, maxHealth));
+
+}
 
 // void Player::_input(Variant e){
 

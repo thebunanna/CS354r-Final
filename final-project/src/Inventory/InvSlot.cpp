@@ -91,6 +91,10 @@ InvItem* InvSlot::pick_item () {
     return temp;
 }
 
+InvItem* InvSlot::get_item () {
+    return item;
+}
+
 bool InvSlot::put_item(InvItem* newItem) {
     if (item != nullptr) return false;
 	item = newItem;

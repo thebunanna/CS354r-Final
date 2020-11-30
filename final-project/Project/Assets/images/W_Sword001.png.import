@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/C_Elm03.png-2b413a2f8965f2fc556d0e1e33e8b260.stex"
+path="res://.import/W_Sword001.png-c63f9b666d6e1c187dbee53e7015649e.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/C_Elm03.png"
-dest_files=[ "res://.import/C_Elm03.png-2b413a2f8965f2fc556d0e1e33e8b260.stex" ]
+source_file="res://Assets/images/W_Sword001.png"
+dest_files=[ "res://.import/W_Sword001.png-c63f9b666d6e1c187dbee53e7015649e.stex" ]
 
 [params]
 

@@ -36,7 +36,7 @@ InvSlot* InvItem::get_slot() {
 }
 
 void InvItem::set_slot(InvSlot* slot) {
-    //itemSlot = slot;
+    itemSlot = slot;
 }
 
 String InvItem::get_name() {
@@ -55,3 +55,7 @@ void InvItem::put_item() {
 	isPicked = false;
 }
 	
+bool InvItem::interact() {
+    Godot::print("interacting!" + itemName);
+    return true;
+}

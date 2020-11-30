@@ -3,6 +3,7 @@
 #include <SceneTree.hpp>
 #include <ResourceLoader.hpp>
 #include <Viewport.hpp>
+#include "Consumables.h"
 
 using namespace godot;
 
@@ -46,7 +47,7 @@ void Inventory::_ready(){
 
     //test code remove later.
     ResourceLoader* resourceLoader = ResourceLoader::get_singleton();
-    Ref<Texture> text = resourceLoader->load("res://images/W_Sword001.png");
+    Ref<Texture> text = resourceLoader->load("res://Assets/images/W_Sword001.png");
     
     InvItem* test = InvItem::_new();
     test->_init("sword", nullptr, text);
@@ -57,6 +58,13 @@ void Inventory::_ready(){
     test2->_init("sword", nullptr, text);
 
     add_item(test2);
+
+    Ref<Texture> text2 = resourceLoader->load("res://Assets/images/Ac_Ring05.png");
+
+    Consumables* test3 = Consumables::_new();
+    test3->_init("sword", nullptr, text2);
+    
+    add_item(test3);
 
     //Object::cast_to<InvItem>(items[0])->set_item()
 }
@@ -111,5 +119,13 @@ void Inventory::slot_gui_event (InputEvent* e, InvSlot* slot) {
                 heldItem = nullptr;
             }
         }
+    }
+    else if (e->is_action_pressed("ui_inventory_use")) {
+        InvItem* item = slot->get_item();
+        if (item != nullptr)
+        {
+            item->interact();
+        }
+
     }
 }

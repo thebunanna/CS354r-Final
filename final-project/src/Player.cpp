@@ -124,6 +124,7 @@ float Player::get_cur_health () {
 }
 void Player::modify_health (float delta) {
     curHealth += delta;
+    if (curHealth > maxHealth) curHealth = maxHealth;
     emit_signal("health_changed", Vector2(curHealth, maxHealth));
 
 }

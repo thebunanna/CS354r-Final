@@ -5,6 +5,7 @@
 #include "Inventory/Inventory.h"
 #include "Inventory/InvSlot.h"
 #include "Inventory/InvItem.h"
+#include "Inventory/Consumables.h"
 
 #include "UI/HealthBar.h"
 extern "C" void GDN_EXPORT godot_gdnative_init(godot_gdnative_init_options *o) {
@@ -22,6 +23,7 @@ extern "C" void GDN_EXPORT godot_nativescript_init(void *handle) {
     godot::register_class<godot::Inventory>();
     godot::register_class<godot::InvSlot>();
     godot::register_class<godot::InvItem>();
+    godot::register_class<godot::Consumables>();
 
     godot::register_class<godot::HealthBar>();
 

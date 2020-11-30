@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Ac_Necklace03.png-c93add207e208ba50329a801c32a2131.stex"
+path="res://.import/C_Elm03.png-1c4a92db9d316b8468f3f08f31718024.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/Ac_Necklace03.png"
-dest_files=[ "res://.import/Ac_Necklace03.png-c93add207e208ba50329a801c32a2131.stex" ]
+source_file="res://Assets/images/C_Elm03.png"
+dest_files=[ "res://.import/C_Elm03.png-1c4a92db9d316b8468f3f08f31718024.stex" ]
 
 [params]
 

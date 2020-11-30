@@ -37,6 +37,7 @@ namespace godot {
 
         void set_item(InvItem* newItem);
         InvItem* pick_item ();
+        InvItem* get_item ();
         bool put_item(InvItem* newItem);
         bool remove_item ();
     };

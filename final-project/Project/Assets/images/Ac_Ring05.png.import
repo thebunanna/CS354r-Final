@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/A_Armor05.png-701d21b2de3873ec6b7f07fdb972b12e.stex"
+path="res://.import/Ac_Ring05.png-7b7d1821f7123a69560c9e15951b308a.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/A_Armor05.png"
-dest_files=[ "res://.import/A_Armor05.png-701d21b2de3873ec6b7f07fdb972b12e.stex" ]
+source_file="res://Assets/images/Ac_Ring05.png"
+dest_files=[ "res://.import/Ac_Ring05.png-7b7d1821f7123a69560c9e15951b308a.stex" ]
 
 [params]
 

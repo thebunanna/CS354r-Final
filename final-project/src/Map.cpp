@@ -9,6 +9,8 @@ void Map::_register_methods() {
     register_method("_process", &Map::_process);
     register_method("generate", &Map::generate);
     register_method("get_path", &Map::get_path);
+    register_method("is_cell_vacant", &Map::is_cell_vacant);
+    register_method("update_child_pos", &Map::update_child_pos);
 }
 
 Map::Map() {
@@ -141,4 +143,25 @@ PoolVector2Array Map::get_path(Vector2 start, Vector2 end){
     int end_index = calculate_point_index(end);
    
     return astar->get_point_path(start_index, end_index);
+}
+
+bool Map::is_cell_vacant(Vector2 position, Vector2 direction){
+    
+    Vector2 target_tile = world_to_map(position) + direction;
+    
+    if (target_tile.x < map_size.x && target_tile.x >= 0) {
+        if(target_tile.y < map_size.y && target_tile.y >= 0){
+            return get_cell(target_tile.x, target_tile.y) == FLOOR;
+        }
+    }
+
+    return false;
+}
+Vector2 Map::update_child_pos(Vector2 position, Vector2 direction){
+
+    Vector2 this_tile = world_to_map(position);
+    Vector2 new_tile = this_tile + direction;
+
+    Vector2 new_pos = map_to_world(new_tile);
+    return new_pos;
 }

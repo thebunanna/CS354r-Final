@@ -31,6 +31,7 @@ void Player::_process(float delta) {
     time_passed += delta;
 
     Vector2 direction = Vector2(0,0);
+    speed = 0;
 
     if(Input::get_singleton()->is_action_pressed("move_up"))
         direction.y -= 1;
@@ -41,12 +42,22 @@ void Player::_process(float delta) {
     else if(Input::get_singleton()->is_action_pressed("move_right"))
         direction.x += 1;
 
+    if(direction != Vector2())
+        speed = MAX_SPEED;
+
+    // velocity = speed * direction * delta;
+    // move_and_collide(velocity);
 
     if(!is_moving && direction != Vector2()){
-        Godot::print("in 1");
         movedir = direction.normalized();
-        is_moving = true;   
+
+        if(get_node("/root/Main/TileMap")->call("is_cell_vacant", get_position().snapped(Vector2(tile_size, tile_size)), movedir)){
+            is_moving = true;   
+            target_pos = get_node("/root/Main/TileMap")->call("update_child_pos", get_position().snapped(Vector2(tile_size, tile_size)), movedir);
+        }
     }
+
+    
 
 
     if(is_moving){
@@ -58,8 +69,14 @@ void Player::_process(float delta) {
         float move_distance = velocity.length();
 
         if(distance_to_target < move_distance){
-            velocity = target_pos * distance_to_target;
-            is_moving = false; 
+            
+            if(still_moving() && get_node("/root/Main/TileMap")->call("is_cell_vacant", get_position().snapped(Vector2(tile_size, tile_size)), movedir)){
+                target_pos = get_node("/root/Main/TileMap")->call("update_child_pos", get_position().snapped(Vector2(tile_size, tile_size)), movedir);
+            }else{
+                velocity = movedir * distance_to_target;
+                is_moving = false; 
+            }
+            
         }
 
         move_and_collide(velocity);

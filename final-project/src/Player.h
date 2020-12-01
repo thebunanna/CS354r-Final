@@ -29,8 +29,6 @@ namespace godot {
 
         RayCast2D* ray;
 
-        Vector2 get_movedir();
-
         bool still_moving();
 
     public:
@@ -45,7 +43,6 @@ namespace godot {
 
         void _process(float delta);
 
-        //void _input(Variant e);
     };
 
 }

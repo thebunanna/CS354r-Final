@@ -26,10 +26,18 @@ namespace godot {
         int calculate_point_index(Vector2 point);
         bool is_outside_map_bounds(Vector2 point);
         
+        
 
 
     public:
         static void _register_methods();
+
+        bool is_cell_vacant(Vector2 position, Vector2 direction);
+        Vector2 update_child_pos(Vector2 position, Vector2 direction);
+
+        Vector2 get_hitstun_tile(Vector2 position, Vector2 direction);
+
+        enum{WALL, FLOOR};
 
         Map();
         ~Map();

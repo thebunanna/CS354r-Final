@@ -3,34 +3,48 @@
 
 #include <Godot.hpp>
 #include <Sprite.hpp>
+#include <KinematicBody2D.hpp>
+#include <KinematicCollision2D.hpp>
 #include <Input.hpp>
 #include <InputEvent.hpp>
 #include <RayCast2D.hpp>
+#include <Timer.hpp>
+#include <CollisionPolygon2D.hpp>
+#include <Color.hpp>
 
 namespace godot {
 
-    class Player : public Sprite {
-        GODOT_CLASS(Player, Sprite)
+    class Player : public KinematicBody2D {
+        GODOT_CLASS(Player, KinematicBody2D)
 
     private:
         float time_passed;
 
         int tile_size = 64;
+        const float MAX_SPEED = 400;
+        float speed = 0;
 
-        float movespeed = 8;
-
-        Vector2 last_pos;
+        Vector2 velocity;
         Vector2 target_pos;
         Vector2 movedir;
-
+        bool is_moving = false;
+        bool in_hitstun = false;
+        Timer* hitstun_timer;
+        Timer* flicker_timer;
         RayCast2D* ray;
 
+        CollisionPolygon2D* hurtbox;
+        Sprite* sprite;
+
+        void flicker();
         float curHealth;
         float maxHealth;
 
         void get_movedir();
 
         bool still_moving();
+
+        void end_hitstun();
 
     public:
         static void _register_methods();
@@ -47,7 +61,6 @@ namespace godot {
         float get_cur_health ();
         void modify_health (float delta);
 
-        //void _input(Variant e);
     };
 
 }

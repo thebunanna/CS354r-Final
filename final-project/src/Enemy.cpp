@@ -25,35 +25,43 @@ void Enemy::_init() {
 void Enemy::_ready(){
     set_position(Vector2(256, 256).snapped(Vector2(tile_size, tile_size)));
     target_pos = get_position();
-    last_pos = get_position();
 }
 
 void Enemy::_process(float delta) {
     time_passed += delta;
 
-    //120 fps
-    if(time_passed >= 0.0083333){
+    Vector2 direction = get_movedir();
+    if(direction != Vector2())
+        speed = MAX_SPEED;
+
+    if(!is_moving && direction != Vector2()){
+        movedir = direction.normalized();
+
+        if(get_node("/root/Main/TileMap")->call("is_cell_vacant", get_position().snapped(Vector2(tile_size, tile_size)), movedir)){
+            is_moving = true;   
+            target_pos = get_node("/root/Main/TileMap")->call("update_child_pos", get_position().snapped(Vector2(tile_size, tile_size)), movedir);
+        }
+    }
+
+    if(is_moving){
         
-        time_passed = 0.0;
-        Vector2 position = get_position();
+        speed = MAX_SPEED;
+        velocity = speed * movedir * delta;
 
-        position += movespeed * movedir;
+        float distance_to_target = get_position().distance_to(target_pos);
+        float move_distance = velocity.length();
 
-        if(position.distance_to(last_pos) >= tile_size - movespeed){
-            position = target_pos;
-        }
-                
-        if(position == target_pos){
-            get_movedir();
-            last_pos = position;
-            target_pos += movedir * tile_size;
+        if(distance_to_target < move_distance){
+
+             velocity = movedir * distance_to_target;
+             is_moving = false; 
         }
 
-        set_position(position);
+        move_and_collide(velocity);
     }
 }
 
-void Enemy::get_movedir(){
+Vector2 Enemy::get_movedir(){
 
     Sprite* player = static_cast<godot::Sprite*>(get_node("/root/Main/Player"));
     Vector2 player_pos = player->get_position().snapped(Vector2(tile_size, tile_size));
@@ -63,16 +71,20 @@ void Enemy::get_movedir(){
     
     Vector2 current_tile = my_pos / tile_size;
 
-    if(path.size() > 1)
-        movedir = path[1] - current_tile;
-    else
-        movedir = Vector2(0,0);
+    Vector2 direction;
 
-    if(current_tile + movedir == player_pos / tile_size)
-        movedir = Vector2(0,0);
+    if(path.size() > 1)
+        direction = path[1] - current_tile;
+    else
+        direction = Vector2(0,0);
+
+    if(current_tile + direction == player_pos / tile_size)
+        direction = Vector2(0,0);
     
-    if(movedir.x != 0 && movedir.y != 0)
-        movedir = Vector2(0,0);
+    if(direction.x != 0 && direction.y != 0)
+        direction = Vector2(0,0);
+
+    return direction;
 }
 
 void Enemy::init(Vector2 pos){

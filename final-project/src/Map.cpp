@@ -11,6 +11,7 @@ void Map::_register_methods() {
     register_method("get_path", &Map::get_path);
     register_method("is_cell_vacant", &Map::is_cell_vacant);
     register_method("update_child_pos", &Map::update_child_pos);
+    register_method("get_hitstun_tile", &Map::get_hitstun_tile);
 }
 
 Map::Map() {
@@ -164,4 +165,25 @@ Vector2 Map::update_child_pos(Vector2 position, Vector2 direction){
 
     Vector2 new_pos = map_to_world(new_tile);
     return new_pos;
+}
+
+Vector2 Map::get_hitstun_tile(Vector2 position, Vector2 direction){
+    std::cout << "in method" << std::endl;
+    Vector2 curr_tile = world_to_map(position);
+    Godot::print(curr_tile);
+    Godot::print(direction);
+
+    Vector2 res_tile = curr_tile + (direction * 2);
+
+    if(is_cell_vacant(map_to_world(res_tile), Vector2())){
+        return map_to_world(res_tile);
+    }
+
+    res_tile = curr_tile + direction;
+
+    if(is_cell_vacant(map_to_world(res_tile), Vector2())){
+        return map_to_world(res_tile);
+    }
+
+    return map_to_world(curr_tile);
 }

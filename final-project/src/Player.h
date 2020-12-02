@@ -8,6 +8,8 @@
 #include <Input.hpp>
 #include <InputEvent.hpp>
 #include <RayCast2D.hpp>
+#include <Timer.hpp>
+#include <CollisionPolygon2D.hpp>
 
 namespace godot {
 
@@ -22,14 +24,18 @@ namespace godot {
         float speed = 0;
 
         Vector2 velocity;
-        Vector2 last_pos;
         Vector2 target_pos;
         Vector2 movedir;
         bool is_moving = false;
-
+        bool in_hitstun = false;
+        Timer* hitstun_timer;
         RayCast2D* ray;
 
+        CollisionPolygon2D* hurtbox;
+
         bool still_moving();
+
+        void end_hitstun();
 
     public:
         static void _register_methods();

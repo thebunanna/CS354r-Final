@@ -168,10 +168,8 @@ Vector2 Map::update_child_pos(Vector2 position, Vector2 direction){
 }
 
 Vector2 Map::get_hitstun_tile(Vector2 position, Vector2 direction){
-    std::cout << "in method" << std::endl;
+    
     Vector2 curr_tile = world_to_map(position);
-    Godot::print(curr_tile);
-    Godot::print(direction);
 
     Vector2 res_tile = curr_tile + (direction * 2);
 

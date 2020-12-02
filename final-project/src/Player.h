@@ -10,6 +10,7 @@
 #include <RayCast2D.hpp>
 #include <Timer.hpp>
 #include <CollisionPolygon2D.hpp>
+#include <Color.hpp>
 
 namespace godot {
 
@@ -29,9 +30,13 @@ namespace godot {
         bool is_moving = false;
         bool in_hitstun = false;
         Timer* hitstun_timer;
+        Timer* flicker_timer;
         RayCast2D* ray;
 
         CollisionPolygon2D* hurtbox;
+        Sprite* sprite;
+
+        void flicker();
 
         bool still_moving();
 

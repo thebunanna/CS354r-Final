@@ -6,6 +6,7 @@ void Player::_register_methods() {
     register_method("_process", &Player::_process);
     register_method("_ready", &Player::_ready);
     register_method("end_hitstun", &Player::end_hitstun);
+    register_method("flicker", &Player::flicker);
 }
 
 Player::Player() {
@@ -25,18 +26,25 @@ void Player::_init() {
     hitstun_timer->set_one_shot (false);
     add_child (hitstun_timer);
     hitstun_timer->connect("timeout", this, "end_hitstun");
+
+    flicker_timer = Timer()._new();
+    flicker_timer->set_wait_time (.2);
+    flicker_timer->set_one_shot (false);
+    add_child (flicker_timer);
+    flicker_timer->connect("timeout", this, "flicker");
 }
 
 void Player::_ready(){
     set_position(Vector2(64,64).snapped(Vector2(tile_size, tile_size)));
     target_pos = get_position();
     hurtbox = Object::cast_to<CollisionPolygon2D>(CollisionPolygon2D::___get_from_variant(get_node("CollisionPolygon2D")));
+    sprite = Object::cast_to<Sprite>(Sprite::___get_from_variant(get_node("Sprite")));
+
 }
 
 void Player::_process(float delta) {
     time_passed += delta;
     velocity = Vector2(0, 0);
-
     
     Vector2 direction = Vector2(0,0);
     speed = 0;
@@ -69,6 +77,8 @@ void Player::_process(float delta) {
         speed = MAX_SPEED;
         velocity = speed * movedir * delta;
 
+        movedir = (target_pos - get_position()).normalized();
+
         float distance_to_target = get_position().distance_to(target_pos);
         float move_distance = velocity.length();
 
@@ -88,22 +98,19 @@ void Player::_process(float delta) {
 
     if(k != NULL){
         if(k->get_collider()->has_method("init")){
-            Godot::print("colliding");
 
             in_hitstun = true;
             hitstun_timer->start();
+            flicker_timer->start();
             hurtbox->set_disabled(true);
+            sprite->set_modulate(Color(1,1,0));
             is_moving = true;
 
             movedir = k->get_normal();
             target_pos = get_node("/root/Main/TileMap")->call("get_hitstun_tile", get_position(), movedir);
 
-            std::cout << "pos: " << get_position().x / 64 << ", " << get_position().y / 64 << std::endl; 
-            std::cout << "target: " << target_pos.x / 64 << ", " << target_pos.y / 64 << std::endl; 
-
             movedir = (target_pos - get_position()).normalized();
 
-            std::cout << "movedir: " << movedir.x / 64 << ", " << movedir.y / 64 << std::endl; 
         }
     }
 }
@@ -134,6 +141,14 @@ bool Player::still_moving(){
 void Player::end_hitstun(){
     in_hitstun = false;
     hurtbox->set_disabled(false);
-    Godot::print("hitstun ended");
     hitstun_timer->stop();
+    flicker_timer->stop();
+    sprite->set_modulate(Color(1,1,1));
+}
+
+void Player::flicker(){
+    if(sprite->get_modulate() == Color(1,1,1))
+        sprite->set_modulate(Color(1,1,0));
+    else
+        sprite->set_modulate(Color(1,1,1));
 }

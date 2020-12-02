@@ -84,7 +84,8 @@ void Player::_process(float delta) {
         speed = MAX_SPEED;
         velocity = speed * movedir * delta;
 
-        movedir = (target_pos - get_position()).normalized();
+        if(in_hitstun)
+            movedir = (target_pos - get_position()).normalized();
 
         float distance_to_target = get_position().distance_to(target_pos);
         float move_distance = velocity.length();
@@ -118,6 +119,7 @@ void Player::_process(float delta) {
 
             movedir = (target_pos - get_position()).normalized();
 
+            modify_health(-20);
         }
     }
 }

@@ -7,6 +7,9 @@ void Player::_register_methods() {
     register_method("_ready", &Player::_ready);
     register_method("end_hitstun", &Player::end_hitstun);
     register_method("flicker", &Player::flicker);
+    //register_method("_input", &Player::_input);
+    register_signal<Player>((char *)"health_changed", "health", GODOT_VARIANT_TYPE_VECTOR2);
+
 }
 
 Player::Player() {
@@ -32,6 +35,9 @@ void Player::_init() {
     flicker_timer->set_one_shot (false);
     add_child (flicker_timer);
     flicker_timer->connect("timeout", this, "flicker");
+    
+    maxHealth = 100;
+    curHealth = 0;
 }
 
 void Player::_ready(){
@@ -40,6 +46,7 @@ void Player::_ready(){
     hurtbox = Object::cast_to<CollisionPolygon2D>(CollisionPolygon2D::___get_from_variant(get_node("CollisionPolygon2D")));
     sprite = Object::cast_to<Sprite>(Sprite::___get_from_variant(get_node("Sprite")));
 
+    modify_health(50);
 }
 
 void Player::_process(float delta) {
@@ -152,3 +159,42 @@ void Player::flicker(){
     else
         sprite->set_modulate(Color(1,1,1));
 }
+float Player::get_cur_health () {
+    return curHealth;
+}
+void Player::modify_health (float delta) {
+    curHealth += delta;
+    if (curHealth > maxHealth) curHealth = maxHealth;
+    emit_signal("health_changed", Vector2(curHealth, maxHealth));
+
+}
+
+// void Player::_input(Variant e){
+
+//     InputEvent* event = Object::cast_to<InputEvent>(InputEvent::___get_from_variant(e));
+
+//     if(get_position() == target_pos){
+
+//         movedir = Vector2(0,0);
+
+//         if(Input::get_singleton()->is_action_pressed("move_up"))
+//             movedir.y -= 1;
+//         else if(Input::get_singleton()->is_action_pressed("move_down"))
+//             movedir.y += 1;
+//         else if(Input::get_singleton()->is_action_pressed("move_left"))
+//             movedir.x -= 1;
+//         else if(Input::get_singleton()->is_action_pressed("move_right"))
+//             movedir.x += 1;
+
+//         //makes sure you can't move diagonally
+//         if(movedir.x == 0 && movedir.y == 0)
+//             movedir = Vector2(0,0);
+
+//         if(movedir != Vector2(0,0))
+//             ray->set_cast_to(movedir * tile_size / 2);
+        
+//         last_pos = get_position();
+//         target_pos += movedir * tile_size;
+//     }
+    
+// }

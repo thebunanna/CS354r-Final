@@ -37,6 +37,10 @@ namespace godot {
         Sprite* sprite;
 
         void flicker();
+        float curHealth;
+        float maxHealth;
+
+        void get_movedir();
 
         bool still_moving();
 
@@ -53,6 +57,9 @@ namespace godot {
         void _ready();
 
         void _process(float delta);
+        
+        float get_cur_health ();
+        void modify_health (float delta);
 
     };
 

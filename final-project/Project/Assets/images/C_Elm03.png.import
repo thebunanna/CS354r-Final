@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/E_Wood02.png-5d6e9b4a537dfae9077c3ba6fa21bca2.stex"
+path="res://.import/C_Elm03.png-1c4a92db9d316b8468f3f08f31718024.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/E_Wood02.png"
-dest_files=[ "res://.import/E_Wood02.png-5d6e9b4a537dfae9077c3ba6fa21bca2.stex" ]
+source_file="res://Assets/images/C_Elm03.png"
+dest_files=[ "res://.import/C_Elm03.png-1c4a92db9d316b8468f3f08f31718024.stex" ]
 
 [params]
 

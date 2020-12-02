@@ -7,6 +7,8 @@ using namespace godot;
 
 void Map::_register_methods() {
     register_method("_process", &Map::_process);
+    register_method("_ready", &Map::_ready);
+
     register_method("generate", &Map::generate);
     register_method("get_path", &Map::get_path);
     register_method("is_cell_vacant", &Map::is_cell_vacant);
@@ -67,8 +69,11 @@ void Map::generate() {
 }
 
 void Map::_process(float delta) {
+
     //bool flag = true;
     if (flag) {
+        Godot::print ("I should be genereating");
+
         generate();
         flag = false;
 

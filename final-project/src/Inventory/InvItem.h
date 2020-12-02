@@ -14,7 +14,7 @@ namespace godot {
     class InvItem : public TextureRect {
         GODOT_CLASS(InvItem, TextureRect)
 
-    private:
+    protected:
         String itemName;
         InvSlot* itemSlot;
         Ref<Texture> texture;
@@ -25,15 +25,24 @@ namespace godot {
         InvItem();
         ~InvItem();
 
-        void _init();
-        //void _init(String _itemName, InvSlot* _itemSlot, Ref<Texture> _itemTexture); // our initializer called by Godot
+        void _init(); // our initializer called by Godot
+        void _init(String _itemName, InvSlot* _itemSlot, Ref<Texture> _itemTexture); 
+
         void _init(Ref<Texture> _itemTexture);
+
         void _ready();
 
         InvSlot* get_slot ();
         void set_slot (InvSlot* slot);
 
         String get_name ();
+
+        bool isPicked = false;
+
+        void pick_item();
+        void put_item();
+
+        virtual bool interact ();
     };
 
 }

@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Ac_Necklace03.png-c93add207e208ba50329a801c32a2131.stex"
+path="res://.import/lifebar_fill.png-d321a462bac8b54a32869e51a67c99ad.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/Ac_Necklace03.png"
-dest_files=[ "res://.import/Ac_Necklace03.png-c93add207e208ba50329a801c32a2131.stex" ]
+source_file="res://Assets/UI/lifebar_fill.png"
+dest_files=[ "res://.import/lifebar_fill.png-d321a462bac8b54a32869e51a67c99ad.stex" ]
 
 [params]
 

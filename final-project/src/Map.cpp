@@ -14,6 +14,7 @@ void Map::_register_methods() {
     register_method("is_cell_vacant", &Map::is_cell_vacant);
     register_method("update_child_pos", &Map::update_child_pos);
     register_method("get_hitstun_tile", &Map::get_hitstun_tile);
+    register_method("attack", &Map::attack);
 }
 
 Map::Map() {
@@ -189,4 +190,23 @@ Vector2 Map::get_hitstun_tile(Vector2 position, Vector2 direction){
     }
 
     return map_to_world(curr_tile);
+}
+
+void Map::attack(Vector2 position, Vector2 direction, float damage){
+
+    Vector2 attack_tile = world_to_map(position.snapped(Vector2(tile_size, tile_size))) + direction;
+
+    Node* enemy_node = static_cast<godot::Node*>(get_node("/root/Main/Enemies"));
+    Array enemies = enemy_node->get_children();
+
+    if(enemies.size() != 0){
+        for(int i=0; i<enemies.size(); i++){
+            Enemy* e = Object::cast_to<Enemy>(Enemy::___get_from_variant(enemies.pop_front()));
+
+            if(world_to_map(e->get_position().snapped(Vector2(tile_size, tile_size))) == attack_tile){
+                e->call("take_damage", damage, direction);
+            }
+        }
+    }
+
 }

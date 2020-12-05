@@ -3,6 +3,8 @@
 
 #include <Godot.hpp>
 #include <TileMap.hpp>
+#include <Sprite.hpp>
+#include "Enemy.h"
 #include <TileSet.hpp>
 #include <AStar2D.hpp>
 
@@ -36,6 +38,8 @@ namespace godot {
         Vector2 update_child_pos(Vector2 position, Vector2 direction);
 
         Vector2 get_hitstun_tile(Vector2 position, Vector2 direction);
+
+        void attack(Vector2 position, Vector2 direction, float damage);
 
         enum{WALL, FLOOR};
 

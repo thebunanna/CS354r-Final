@@ -31,20 +31,29 @@ namespace godot {
         bool in_hitstun = false;
         Timer* hitstun_timer;
         Timer* flicker_timer;
+        Timer* attack_timer;
         RayCast2D* ray;
 
         CollisionPolygon2D* hurtbox;
         Sprite* sprite;
+        Sprite* weapon;
 
         void flicker();
         float curHealth;
         float maxHealth;
+        float attack_damage = 20;
+
+        bool dead = false;
 
         void get_movedir();
 
         bool still_moving();
 
         void end_hitstun();
+        void end_attack();
+
+        void check_attack();
+        void check_death();
 
     public:
         static void _register_methods();

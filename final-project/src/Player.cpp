@@ -7,6 +7,7 @@ void Player::_register_methods() {
     register_method("_ready", &Player::_ready);
     register_method("end_hitstun", &Player::end_hitstun);
     register_method("flicker", &Player::flicker);
+    register_method("end_attack", &Player::end_attack);
     //register_method("_input", &Player::_input);
     register_signal<Player>((char *)"health_changed", "health", GODOT_VARIANT_TYPE_VECTOR2);
 
@@ -35,6 +36,12 @@ void Player::_init() {
     flicker_timer->set_one_shot (false);
     add_child (flicker_timer);
     flicker_timer->connect("timeout", this, "flicker");
+
+    attack_timer = Timer()._new();
+    attack_timer->set_wait_time (.25);
+    attack_timer->set_one_shot (false);
+    add_child (attack_timer);
+    attack_timer->connect("timeout", this, "end_attack");
     
     maxHealth = 100;
     curHealth = 0;
@@ -45,83 +52,92 @@ void Player::_ready(){
     target_pos = get_position();
     hurtbox = Object::cast_to<CollisionPolygon2D>(CollisionPolygon2D::___get_from_variant(get_node("CollisionPolygon2D")));
     sprite = Object::cast_to<Sprite>(Sprite::___get_from_variant(get_node("Sprite")));
-
+    weapon = Object::cast_to<Sprite>(Sprite::___get_from_variant(get_node("Weapon")));
     modify_health(50);
 }
 
 void Player::_process(float delta) {
-    time_passed += delta;
-    velocity = Vector2(0, 0);
-    
-    Vector2 direction = Vector2(0,0);
-    speed = 0;
 
-    if(Input::get_singleton()->is_action_pressed("move_up"))
-        direction.y -= 1;
-    else if(Input::get_singleton()->is_action_pressed("move_down"))
-        direction.y += 1;
-    else if(Input::get_singleton()->is_action_pressed("move_left"))
-        direction.x -= 1;
-    else if(Input::get_singleton()->is_action_pressed("move_right"))
-        direction.x += 1;
-
-    if(direction != Vector2())
-        speed = MAX_SPEED;
-
-    if(!is_moving && direction != Vector2()){
-        movedir = direction.normalized();
-
-        if(get_node("/root/Main/TileMap")->call("is_cell_vacant", get_position().snapped(Vector2(tile_size, tile_size)), movedir)){
-            is_moving = true;   
-            target_pos = get_node("/root/Main/TileMap")->call("update_child_pos", get_position().snapped(Vector2(tile_size, tile_size)), movedir);
-        }
-    }
-    
-    
-
-    if(is_moving){
+    if(!dead){
+        time_passed += delta;
+        velocity = Vector2(0, 0);
         
-        speed = MAX_SPEED;
-        velocity = speed * movedir * delta;
+        Vector2 direction = Vector2(0,0);
+        speed = 0;
 
-        if(in_hitstun)
-            movedir = (target_pos - get_position()).normalized();
+        if(Input::get_singleton()->is_action_pressed("move_up"))
+            direction.y -= 1;
+        else if(Input::get_singleton()->is_action_pressed("move_down"))
+            direction.y += 1;
+        else if(Input::get_singleton()->is_action_pressed("move_left"))
+            direction.x -= 1;
+        else if(Input::get_singleton()->is_action_pressed("move_right"))
+            direction.x += 1;
 
-        float distance_to_target = get_position().distance_to(target_pos);
-        float move_distance = velocity.length();
+        if(direction != Vector2())
+            speed = MAX_SPEED;
 
-        if(distance_to_target < move_distance){
-            
-            if(still_moving() && get_node("/root/Main/TileMap")->call("is_cell_vacant", get_position().snapped(Vector2(tile_size, tile_size)), movedir)){
+        if(!is_moving && direction != Vector2()){
+            movedir = direction.normalized();
+
+            if(get_node("/root/Main/TileMap")->call("is_cell_vacant", get_position().snapped(Vector2(tile_size, tile_size)), movedir)){
+                is_moving = true;   
                 target_pos = get_node("/root/Main/TileMap")->call("update_child_pos", get_position().snapped(Vector2(tile_size, tile_size)), movedir);
-            }else{
-                velocity = movedir * distance_to_target;
-                is_moving = false; 
             }
+        }
+        
+        
+
+        if(is_moving){
             
+            speed = MAX_SPEED;
+            velocity = speed * movedir * delta;
+
+            if(in_hitstun)
+                movedir = (target_pos - get_position()).normalized();
+
+            float distance_to_target = get_position().distance_to(target_pos);
+            float move_distance = velocity.length();
+
+            if(distance_to_target < move_distance){
+                
+                if(still_moving() && get_node("/root/Main/TileMap")->call("is_cell_vacant", get_position().snapped(Vector2(tile_size, tile_size)), movedir)){
+                    target_pos = get_node("/root/Main/TileMap")->call("update_child_pos", get_position().snapped(Vector2(tile_size, tile_size)), movedir);
+                }else{
+                    velocity = movedir * distance_to_target;
+                    is_moving = false; 
+                }
+                
+            }
         }
+
+        check_attack();
+
+        KinematicCollision2D* k = *move_and_collide(velocity);
+
+        if(k != NULL){
+            if(k->get_collider()->has_method("init")){
+
+                in_hitstun = true;
+                hitstun_timer->start();
+                flicker_timer->start();
+                hurtbox->set_disabled(true);
+                sprite->set_modulate(Color(1,1,0));
+                is_moving = true;
+
+                movedir = k->get_normal();
+                target_pos = get_node("/root/Main/TileMap")->call("get_hitstun_tile", get_position(), movedir);
+
+                movedir = (target_pos - get_position()).normalized();
+
+                modify_health(-20);
+            }
+        }
+
+        check_death();
     }
 
-    KinematicCollision2D* k = *move_and_collide(velocity);
-
-    if(k != NULL){
-        if(k->get_collider()->has_method("init")){
-
-            in_hitstun = true;
-            hitstun_timer->start();
-            flicker_timer->start();
-            hurtbox->set_disabled(true);
-            sprite->set_modulate(Color(1,1,0));
-            is_moving = true;
-
-            movedir = k->get_normal();
-            target_pos = get_node("/root/Main/TileMap")->call("get_hitstun_tile", get_position(), movedir);
-
-            movedir = (target_pos - get_position()).normalized();
-
-            modify_health(-20);
-        }
-    }
+    
 }
 
 bool Player::still_moving(){
@@ -171,32 +187,45 @@ void Player::modify_health (float delta) {
 
 }
 
-// void Player::_input(Variant e){
+void Player::check_attack(){
 
-//     InputEvent* event = Object::cast_to<InputEvent>(InputEvent::___get_from_variant(e));
+    if(Input::get_singleton()->is_action_pressed("attack") && attack_timer->is_stopped()){
 
-//     if(get_position() == target_pos){
+        if(movedir == Vector2(-1,0)){
+            weapon->set_offset(Vector2(-16, -48));
+            weapon->set_rotation_degrees(180);
+        }else if(movedir == Vector2(0,1)){
+            weapon->set_offset(Vector2(54, -48));
+            weapon->set_rotation_degrees(90);
+        }else if(movedir == Vector2(0,-1)){
+            weapon->set_offset(Vector2(-16, 16));
+            weapon->set_rotation_degrees(-90);
+        }else{
+            weapon->set_offset(Vector2(54, 16));
+            weapon->set_rotation_degrees(0);
+        }
+        weapon->set_visible(true);
+        attack_timer->start();
 
-//         movedir = Vector2(0,0);
+        get_node("/root/Main/TileMap")->call("attack", get_position(), movedir, attack_damage);
 
-//         if(Input::get_singleton()->is_action_pressed("move_up"))
-//             movedir.y -= 1;
-//         else if(Input::get_singleton()->is_action_pressed("move_down"))
-//             movedir.y += 1;
-//         else if(Input::get_singleton()->is_action_pressed("move_left"))
-//             movedir.x -= 1;
-//         else if(Input::get_singleton()->is_action_pressed("move_right"))
-//             movedir.x += 1;
+    }else if(!attack_timer->is_stopped()){
+        get_node("/root/Main/TileMap")->call("attack", get_position(), movedir, attack_damage);
+    }
+}
 
-//         //makes sure you can't move diagonally
-//         if(movedir.x == 0 && movedir.y == 0)
-//             movedir = Vector2(0,0);
-
-//         if(movedir != Vector2(0,0))
-//             ray->set_cast_to(movedir * tile_size / 2);
-        
-//         last_pos = get_position();
-//         target_pos += movedir * tile_size;
-//     }
+void Player::end_attack(){
     
-// }
+    weapon->set_visible(false);
+    attack_timer->stop();   
+}
+
+void Player::check_death(){
+    if(curHealth <= 0){
+        modify_health(0 - curHealth);
+        dead = true;
+        sprite->set_modulate(Color(0,0,0));
+        hitstun_timer->stop();
+        flicker_timer->stop();
+    }
+}

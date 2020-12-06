@@ -9,6 +9,7 @@
 
 #include "Items/InvItem.h"
 #include "InvSlot.h"
+#include "../Player.h"
 
 namespace godot {
 
@@ -22,9 +23,12 @@ namespace godot {
         Array items;
         Array equiped_items;
 
+        Player* p;
 
         InvItem* heldItem = nullptr;
         
+        Array chests;
+        Array chest_items;
     public:
         static void _register_methods();
 
@@ -46,6 +50,9 @@ namespace godot {
         void create_inventory();
 
         void create_player_slots();
+
+        void create_other();
+        void destroy_other();
     };
 
 }

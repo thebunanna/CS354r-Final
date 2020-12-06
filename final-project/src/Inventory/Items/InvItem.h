@@ -18,7 +18,12 @@ namespace godot {
         String itemName;
         int texture_num;
         ItemType type;
+        bool operator==(const ItemBase &other) {
+            return (itemName == other.itemName && texture_num == other.texture_num && type == other.type);
+        }
+
     };
+    
 
     class InvItem : public TextureRect {
         GODOT_CLASS(InvItem, TextureRect)
@@ -36,7 +41,7 @@ namespace godot {
 
         void _init(); // our initializer called by Godot
         void _init(String _itemName, InvSlot* _itemSlot, int _itemTexture, ItemType _type); 
-
+        void _init(ItemBase);
         void _init(Ref<Texture> _itemTexture);
 
         void _ready();
@@ -54,6 +59,10 @@ namespace godot {
         bool check_type (ItemType type);
 
         virtual bool interact ();
+        ItemBase save_data ();
+
+        static ItemBase generate_item ();
+
     };
 
 }

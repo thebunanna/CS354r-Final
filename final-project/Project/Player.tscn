@@ -1,8 +1,10 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://bin/Player.gdns" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
 [ext_resource path="res://Assets/weapon.png" type="Texture" id=3]
+
+[sub_resource type="CircleShape2D" id=1]
 
 [node name="Player" type="KinematicBody2D"]
 script = ExtResource( 1 )
@@ -26,3 +28,12 @@ polygon = PoolVector2Array( 64, 0, 64, 64, 0, 64, 0, 0, 63, 0 )
 visible = false
 texture = ExtResource( 3 )
 centered = false
+
+[node name="InteractArea" type="Area2D" parent="."]
+position = Vector2( 32, 32 )
+scale = Vector2( 10.5302, 10.4234 )
+gravity = 0.0
+linear_damp = 0.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractArea"]
+shape = SubResource( 1 )

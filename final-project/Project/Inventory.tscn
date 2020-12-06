@@ -49,3 +49,29 @@ columns = 6
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Other" type="Panel" parent="."]
+anchor_left = 0.714
+anchor_top = 0.138
+anchor_right = 0.959
+anchor_bottom = 0.613
+margin_left = -644.621
+margin_top = 1.7874
+margin_right = -644.501
+margin_bottom = 1.78738
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SubInventory" type="ScrollContainer" parent="Other"]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 241.0
+margin_bottom = 210.0
+rect_min_size = Vector2( 0, 200 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="InventorySlots" type="GridContainer" parent="Other/SubInventory"]
+columns = 6

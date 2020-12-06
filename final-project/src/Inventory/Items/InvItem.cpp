@@ -1,7 +1,10 @@
 #include "InvItem.h"
 #include <ResourceLoader.hpp>
 #include <Label.hpp>
+#include <RandomNumberGenerator.hpp>
+
 #include "../ItemTextures.h"
+
 
 using namespace godot;
 
@@ -17,7 +20,7 @@ InvItem::~InvItem() {
     // add your cleanup here
 }
 void InvItem::_init() {
-    
+    _init (ItemBase());
 }
 void InvItem::_init(String _name, InvSlot* _itemSlot, int _itemTexture, ItemType _type) {
     data.type = _type;
@@ -26,6 +29,10 @@ void InvItem::_init(String _name, InvSlot* _itemSlot, int _itemTexture, ItemType
     data.texture_num = _itemTexture;
     //set_texture(_itemTexture);
 }
+void InvItem::_init(ItemBase ib) {
+    data = ib;
+}
+
 
 void InvItem::_init(Ref<Texture> _itemTexture) {
     set_texture(_itemTexture);
@@ -73,4 +80,28 @@ bool InvItem::check_type (ItemType type) {
     
     return false;
 
+}
+
+ItemBase InvItem::generate_item () {
+    static auto rng = RandomNumberGenerator::_new();
+    static bool gen = true;
+    if (gen) {
+        rng->randomize();
+        gen = false;
+    }
+
+    ItemBase ret;
+
+    ret.itemName = "something";
+    ret.type = (ItemType) rng->randi_range(0, (int) ItemType::None);
+    
+    ret.texture_num = rng->randi_range(0, 7);
+
+    printf ("%d, %d\n", (int)ret.type, ret.texture_num);
+
+    return ret;
+}
+
+ItemBase InvItem::save_data () {
+    return this->data;
 }

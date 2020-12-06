@@ -19,6 +19,10 @@ config/name="FinalProject"
 run/main_scene="res://Main.tscn"
 config/icon="res://icon.png"
 
+[autoload]
+
+TextureBank="*res://bin/ItemTextures.gdns"
+
 [input]
 
 move_left={

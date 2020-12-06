@@ -33,5 +33,4 @@ void HealthBar::update(Vector2 health) {
     hp_text->set_text(String::num(health.x));
     hp_bar->set_max(health.y);
     hp_bar->set_value(health.x);
-    Godot::print(String::num(hp_bar->get_max()));
 }

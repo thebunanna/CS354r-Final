@@ -3,13 +3,12 @@
 #include <SceneTree.hpp>
 #include <ResourceLoader.hpp>
 #include <Viewport.hpp>
-#include "Consumables.h"
+#include "Items/Consumables.h"
 
 using namespace godot;
 
 
 void Inventory::_register_methods() {
-    register_method("_process", &Inventory::_process);
     register_method("_ready", &Inventory::_ready);
     register_method("_input", &Inventory::_input);
     register_method("get_next_empty", &Inventory::get_next_empty);
@@ -24,61 +23,100 @@ Inventory::~Inventory() {
 }
 
 void Inventory::_init() {
-    max_slots = 20;
+    max_slots = 24;
     // initialize any variables here
 }
 
 void Inventory::_ready(){
-    items = Array();
-    items.resize(max_slots);
-    
-    Node* gui_slots = get_node(NodePath("SlotContainer/InventorySlots"));
-    
-    for (int i = 0; i < max_slots; i++) {
-        InvSlot* it = InvSlot::_new();
-        it->_init(i);
-        items[i] = it;
-        gui_slots->add_child(it);
-        Array temp = Array();
-        temp.append(it);
 
-        it->connect("gui_input", this, "slot_gui_event", temp);
-    }
+    is_open = false;
+    this->set_visible(false);
+
+    create_inventory ();
+    
+    create_player_slots ();
+    
 
     //test code remove later.
-    ResourceLoader* resourceLoader = ResourceLoader::get_singleton();
-    Ref<Texture> text = resourceLoader->load("res://Assets/images/W_Sword001.png");
     
     InvItem* test = InvItem::_new();
-    test->_init("sword", nullptr, text);
+    test->_init("sword", nullptr, 3, ItemType::Weapon);
 
     add_item(test);
 
     InvItem* test2 = InvItem::_new();
-    test2->_init("sword", nullptr, text);
+    test2->_init("armour", nullptr, 0, ItemType::Armour);
 
     add_item(test2);
 
-    Ref<Texture> text2 = resourceLoader->load("res://Assets/images/Ac_Ring05.png");
 
     Consumables* test3 = Consumables::_new();
-    test3->_init("sword", nullptr, text2);
+    test3->_init("not really a sword", nullptr, 1, ItemType::Other);
     
     add_item(test3);
 
     //Object::cast_to<InvItem>(items[0])->set_item()
 }
 
-void Inventory::_process(float delta) {
+void Inventory::create_inventory() {
+    items = Array();
+    items.resize(max_slots);
+    
+    Node* gui_slots = get_node(NodePath("VBOX/MainInventory/InventorySlots"));
+    
+    for (int i = 0; i < max_slots; i++) {
+
+        InvSlot* it = InvSlot::_new();
+        it->_init(i, ItemType::None);
+        items[i] = it;
+
+        gui_slots->add_child(it);
+        Array temp = Array();
+        temp.append(it);
+
+        it->connect("gui_input", this, "slot_gui_event", temp);
+    }
+}
+void Inventory::create_player_slots() {
+    Node* gui_slots = get_node(NodePath("VBOX/Equipment"));
+
+    equiped_items = Array();
+    equiped_items.resize(6);
+
+    ItemType eqtype[] = {
+        ItemType::Weapon, 
+        ItemType::Armour,
+        ItemType::Armour,
+        ItemType::Armour,
+        ItemType::Armour,
+        ItemType::Other,
+    };
+
+    for (int i = 0; i < 6; i++) {
+        InvSlot* it = InvSlot::_new();
+        it->_init(i, eqtype[i]);
+        equiped_items[i] = it;
+
+        gui_slots->add_child(it);
+        Array temp = Array();
+        temp.append(it);
+
+        it->connect("gui_input", this, "slot_gui_event", temp);
+    }
     
 }
 
 void Inventory::_input (InputEvent *event) {
     if (event->is_action_pressed("ui_inventory")) {
-        this->set_visible(true);
+        is_open = !is_open;
+        this->set_visible(is_open);
+        get_tree()->set_pause(is_open);
+        get_tree()->set_input_as_handled();
+
     }
     else if (event->is_action_pressed("ui_cancel")){
         this->set_visible(false);
+        get_tree()->set_pause(false);
         get_tree()->set_input_as_handled();
     }
     if (heldItem && heldItem->isPicked) { 

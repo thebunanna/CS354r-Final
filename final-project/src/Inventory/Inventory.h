@@ -7,7 +7,7 @@
 #include <Panel.hpp>
 #include <InputEvent.hpp>
 
-#include "InvItem.h"
+#include "Items/InvItem.h"
 #include "InvSlot.h"
 
 namespace godot {
@@ -16,8 +16,12 @@ namespace godot {
         GODOT_CLASS(Inventory, Panel)
 
     private:
+        bool is_open;
+
         int max_slots;
         Array items;
+        Array equiped_items;
+
 
         InvItem* heldItem = nullptr;
         
@@ -31,8 +35,6 @@ namespace godot {
 
         void _ready();
 
-        void _process(float delta);
-
         void _input (InputEvent * event);
 
         int get_next_empty();
@@ -40,6 +42,10 @@ namespace godot {
         void add_item (InvItem* item);
 
         void slot_gui_event (InputEvent* e, InvSlot* slot);
+
+        void create_inventory();
+
+        void create_player_slots();
     };
 
 }

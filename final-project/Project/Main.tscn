@@ -10,8 +10,10 @@
 [node name="Main" type="Node2D"]
 
 [node name="Control" parent="." instance=ExtResource( 6 )]
+pause_mode = 2
 
 [node name="Inventory" parent="." instance=ExtResource( 4 )]
+pause_mode = 2
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = ExtResource( 2 )

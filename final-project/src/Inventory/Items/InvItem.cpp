@@ -1,6 +1,8 @@
 #include "InvItem.h"
 #include <ResourceLoader.hpp>
 #include <Label.hpp>
+#include "../ItemTextures.h"
+
 using namespace godot;
 
 void InvItem::_register_methods() {
@@ -17,10 +19,12 @@ InvItem::~InvItem() {
 void InvItem::_init() {
     
 }
-void InvItem::_init(String _name, InvSlot* _itemSlot, Ref<Texture> _itemTexture) {
-    itemName = _name;
+void InvItem::_init(String _name, InvSlot* _itemSlot, int _itemTexture, ItemType _type) {
+    data.type = _type;
+    data.itemName = _name;
     itemSlot = _itemSlot;
-    set_texture(_itemTexture);
+    data.texture_num = _itemTexture;
+    //set_texture(_itemTexture);
 }
 
 void InvItem::_init(Ref<Texture> _itemTexture) {
@@ -28,7 +32,8 @@ void InvItem::_init(Ref<Texture> _itemTexture) {
 }
 
 void InvItem::_ready(){
-
+    ItemTextures* bank = Object::cast_to<ItemTextures> (get_node(NodePath("/root/TextureBank")));
+    set_texture (bank->_get_texture(data.texture_num));
 }
 
 InvSlot* InvItem::get_slot() {
@@ -40,7 +45,7 @@ void InvItem::set_slot(InvSlot* slot) {
 }
 
 String InvItem::get_name() {
-    return itemName;
+    return data.itemName;
 }
 
 void InvItem::pick_item() {
@@ -56,6 +61,16 @@ void InvItem::put_item() {
 }
 	
 bool InvItem::interact() {
-    Godot::print("interacting!" + itemName);
+    Godot::print("interacting!" + data.itemName);
     return true;
+}
+
+///Should be called from InvSlot only. type is inv slot type.
+///Used to check for valid slots.
+bool InvItem::check_type (ItemType type) {
+    if (type == ItemType::None) return true;
+    else if (this->data.type == type) return true;
+    
+    return false;
+
 }

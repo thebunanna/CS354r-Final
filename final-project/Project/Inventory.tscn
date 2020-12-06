@@ -5,23 +5,47 @@
 [node name="Inventory" type="CanvasLayer"]
 
 [node name="Control" type="Panel" parent="."]
-anchor_left = 0.768
+anchor_left = 0.714
 anchor_top = 0.138
-anchor_right = 0.96
-anchor_bottom = 0.511
-margin_right = -0.360016
+anchor_right = 0.959
+anchor_bottom = 0.613
+margin_left = -0.136047
+margin_top = 0.199997
+margin_right = -0.0160522
 margin_bottom = 0.199982
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="SlotContainer" type="ScrollContainer" parent="Control"]
-margin_right = 399.0
-margin_bottom = 405.0
+[node name="VBOX" type="VBoxContainer" parent="Control"]
+anchor_right = 1.0
+anchor_bottom = 0.989
+margin_left = 10.0
+margin_top = 10.0
+margin_right = -10.0
+margin_bottom = -10.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="InventorySlots" type="GridContainer" parent="Control/SlotContainer"]
-columns = 5
+[node name="MainInventory" type="ScrollContainer" parent="Control/VBOX"]
+margin_right = 231.0
+margin_bottom = 200.0
+rect_min_size = Vector2( 0, 200 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="InventorySlots" type="GridContainer" parent="Control/VBOX/MainInventory"]
+columns = 6
+
+[node name="Equipment" type="GridContainer" parent="Control/VBOX"]
+margin_top = 204.0
+margin_right = 231.0
+margin_bottom = 254.0
+rect_min_size = Vector2( 0, 50 )
+columns = 6
+__meta__ = {
+"_edit_use_anchors_": false
+}

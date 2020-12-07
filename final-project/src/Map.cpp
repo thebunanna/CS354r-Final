@@ -149,6 +149,7 @@ void Map::generate() {
                 }
 
                 /* Update A* */
+                obstacles = get_used_cells_by_id(wall);
                 walkable_cells = astar_add_walkable_cells(obstacles);
                 astar_connect_walkable_cells(walkable_cells);
             }
@@ -295,7 +296,7 @@ void Map::attack(Vector2 position, Vector2 direction, float damage){
 
     if(enemies.size() != 0){
         for(int i=0; i<enemies.size(); i++){
-            Enemy* e = Object::cast_to<Enemy>(Enemy::___get_from_variant(enemies.pop_front()));
+            Enemy* e = Object::cast_to<Enemy>(Enemy::___get_from_variant(enemies[i]));
 
             if(world_to_map(e->get_position().snapped(Vector2(tile_size, tile_size))) == attack_tile){
                 e->call("take_damage", damage, direction);

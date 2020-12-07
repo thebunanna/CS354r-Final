@@ -1,7 +1,7 @@
 #include "Consumables.h"
 #include <ResourceLoader.hpp>
 #include <Label.hpp>
-#include "../Player.h"
+#include "../../Player.h"
 using namespace godot;
 
 void Consumables::_register_methods() {
@@ -19,13 +19,13 @@ void Consumables::_init() {
     InvItem::_init();
 }
 
-void Consumables::_init(String _name, InvSlot* _itemSlot, Ref<Texture> _itemTexture) {
-    InvItem::_init(_name, _itemSlot, _itemTexture);
+void Consumables::_init(String _name, InvSlot* _itemSlot, int _itemTexture, ItemType _type) {
+    InvItem::_init(_name, _itemSlot, _itemTexture, _type);
 }
 
 
 void Consumables::_ready() {
-
+    InvItem::_ready();
 }
 
 bool Consumables::interact() {

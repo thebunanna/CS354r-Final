@@ -11,6 +11,7 @@
 #include <Timer.hpp>
 #include <CollisionPolygon2D.hpp>
 #include <Color.hpp>
+#include <Area2D.hpp>
 
 namespace godot {
 
@@ -37,6 +38,8 @@ namespace godot {
         CollisionPolygon2D* hurtbox;
         Sprite* sprite;
         Sprite* weapon;
+
+        Area2D* area;
 
         void flicker();
         float curHealth;
@@ -70,6 +73,7 @@ namespace godot {
         float get_cur_health ();
         void modify_health (float delta);
 
+        Array get_interact ();
     };
 
 }

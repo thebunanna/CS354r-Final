@@ -6,6 +6,8 @@
 #include <Input.hpp>
 #include <Panel.hpp>
 #include <StyleBoxFlat.hpp>
+#include "ItemTypes.h"
+#include "Items/InvItem.h"
 
 
 namespace godot {
@@ -18,6 +20,8 @@ namespace godot {
         int slot_num;
         InvItem* item;
         StyleBoxFlat* style;
+        ItemType slot_type;
+
     public:
         static void _register_methods();
 
@@ -25,7 +29,7 @@ namespace godot {
         ~InvSlot();
 
         void _init();
-        void _init(int num); // our initializer called by Godot
+        void _init(int num, ItemType type); // our initializer called by Godot
 
         void _ready();
         void refreshColors();

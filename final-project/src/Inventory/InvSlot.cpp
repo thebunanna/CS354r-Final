@@ -1,10 +1,10 @@
 #include "InvSlot.h"
-#include "InvItem.h"
 
 #include <SceneTree.hpp>
 #include <Node.hpp>
 #include <Label.hpp>
 #include <Viewport.hpp>
+
 using namespace godot;
 
 void InvSlot::_register_methods() {
@@ -22,13 +22,14 @@ InvSlot::~InvSlot() {
     // add your cleanup here
 }
 void InvSlot::_init() {
-    _init (0);
+    _init (0, ItemType::None);
 }
-void InvSlot::_init(int num) {
+void InvSlot::_init(int num, ItemType type) {
     // initialize any variables here
     slot_num = num;
     set_custom_minimum_size(Vector2(34,34));
     item = NULL;
+    slot_type = type;
 }
 
 void InvSlot::_ready(){
@@ -97,6 +98,7 @@ InvItem* InvSlot::get_item () {
 
 bool InvSlot::put_item(InvItem* newItem) {
     if (item != nullptr) return false;
+    if (!newItem->check_type (this->slot_type)) return false;
 	item = newItem;
     item->set_slot (this);
     item->put_item();

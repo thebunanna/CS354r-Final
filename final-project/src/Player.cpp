@@ -54,6 +54,8 @@ void Player::_ready(){
     sprite = Object::cast_to<Sprite>(Sprite::___get_from_variant(get_node("Sprite")));
     weapon = Object::cast_to<Sprite>(Sprite::___get_from_variant(get_node("Weapon")));
     modify_health(50);
+
+    area = Object::cast_to<Area2D>(get_node(NodePath("./InteractArea")));
 }
 
 void Player::_process(float delta) {
@@ -227,5 +229,15 @@ void Player::check_death(){
         sprite->set_modulate(Color(0,0,0));
         hitstun_timer->stop();
         flicker_timer->stop();
+    }
+}
+
+Array Player::get_interact () {
+    if (area != NULL) {
+        return area->get_overlapping_areas ();
+    }
+    else {
+        std::cout << "Oh no " << std::endl;
+        return Array();
     }
 }

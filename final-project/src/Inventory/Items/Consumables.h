@@ -24,7 +24,7 @@ namespace godot {
         ~Consumables();
 
         void _init();
-        void _init(String _itemName, InvSlot* _itemSlot, Ref<Texture> _itemTexture); 
+        void _init(String _itemName, InvSlot* _itemSlot, int _itemTexture, ItemType _type); 
 
         void _ready();
 

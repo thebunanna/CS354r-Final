@@ -2,6 +2,7 @@
 #include <ResourceLoader.hpp>
 #include <Ref.hpp>
 #include <PoolArrays.hpp>
+#include <RandomNumberGenerator.hpp>
 
 using namespace godot;
 
@@ -15,6 +16,7 @@ void Map::_register_methods() {
     register_method("update_child_pos", &Map::update_child_pos);
     register_method("get_hitstun_tile", &Map::get_hitstun_tile);
     register_method("attack", &Map::attack);
+    register_method("get_random_position", &Map::get_random_position);
 }
 
 Map::Map() {
@@ -26,62 +28,154 @@ Map::~Map() {
 
 void Map::_init() {
     // initialize any variables here
-    // Resource loader for tile set, then cast to tile set and call set_tileset on that
-
-    //// NOT NEEDED (can be set in the editor)
-    //ResourceLoader* rl = ResourceLoader::get_singleton();
-    //Ref<TileSet> tset = rl->load("res://Set1.tres");
-    //set_tileset(tset);
-
     astar = AStar2D::_new();
+    
+    /* Randomizer */
+    rng = RandomNumberGenerator::_new();
+    rng->randomize();
 }
 
 void Map::_ready() {
     //generate();
     flag = true;
-
-    
 }
 
 void Map::generate() {
     // This is where we will do the procedural generation
     clear();
 
-    map_size = Vector2(12, 12);
+    /********** PARAMETERS **********/
+    /* Arena size */
+    int min_x = 25;
+    int max_x = 50;
+    int min_y = 25;
+    int max_y = 50;
 
-    int tile = 0;
-    for (int y = 0; y < map_size.y; ++y) {
-        set_cell(0, y, tile);
-        set_cell(11, y, tile);
-    }
+    /* Number of rooms */
+    int min_rooms = 5;
+    int max_rooms = 10;
 
+    /* Room size */
+    int room_min_x = 5;
+    int room_max_x = 20;
+    int room_min_y = 5;
+    int room_max_y = 20;
+    /********** PARAMETERS **********/
 
-    for(int x = 1; x < map_size.x - 1; x++){
-        for(int y = 1; y < map_size.y - 1; y++){
-            set_cell(x, y, 1);
+    /* Generate Map */
+    int map_x = rng->randi_range(min_x, max_x);
+    int map_y = rng->randi_range(min_y, max_y);
+    int num_rooms = rng->randi_range(min_rooms, max_rooms);
+
+    map_size = Vector2(map_x, map_y);
+
+    /* Tileset */
+    int wall = 0;
+    int floor = 1;
+
+    /* Fill with walls */
+    for (int x = 0; x < map_size.x; ++x) {
+        for (int y = 0; y < map_size.y; ++y) {
+            set_cell(x, y, wall);
         }
     }
 
-    for (int x = 0; x < map_size.x; ++x) {
-        set_cell(x, 0, tile);
-        set_cell(x, 11, tile);
+    Array rooms{};
+
+    for (int r = 0; r < num_rooms; ++r) {
+        int r_x = rng->randi_range(room_min_x, room_max_x);
+        int r_y = rng->randi_range(room_min_y, room_max_y);
+
+        int room_pos_x = rng->randi_range(1, map_size.x - r_x - 1);
+        int room_pos_y = rng->randi_range(1, map_size.y - r_y - 1);
+        for (int rx = room_pos_x; rx < room_pos_x + r_x; ++rx) {
+            for (int ry = room_pos_y; ry < room_pos_y + r_y; ++ry) {
+                set_cell(rx, ry, floor);
+            }
+        }
+        /* Select random point in room to check for hallways from */
+        int rand_x = rng->randi_range(1, r_x - 2);
+        int rand_y = rng->randi_range(1, r_y - 2);
+        rooms.push_back(Vector2(room_pos_x + rand_x, room_pos_y + rand_y));
     }
+
+    obstacles = get_used_cells_by_id(wall);
+    walkable_cells = astar_add_walkable_cells(obstacles);
+    astar_connect_walkable_cells(walkable_cells);
+
+    /* Make sure all rooms connect */
+    for (int i = 0; i < rooms.size() - 1; ++i) {
+        for (int j = i + 1; j < rooms.size(); ++j) {
+            if (!check_path(rooms[i], rooms[j])) {
+                Godot::print("False");
+                /* Add pathway to rooms that do not connect */
+                int beg_x = static_cast<Vector2>(rooms[i]).x;
+                int end_x = static_cast<Vector2>(rooms[j]).x;
+                int beg_y = static_cast<Vector2>(rooms[i]).y;
+                int end_y = static_cast<Vector2>(rooms[j]).y;
+
+                int x_inc = (end_x - beg_x >= 0 ? 1 : -1);
+                int y_inc = (end_y - beg_y >= 0 ? 1 : -1);
+
+                /* Determine orientation of pathway */
+                int xy = rng->randi_range(0, 1);
+                if (xy == 0) {
+                    /* Do x first */
+                    Godot::print("x first");
+                    for (int x = beg_x; x != end_x; x += x_inc) {
+                        set_cell(x, beg_y, floor);
+                        set_cell(x, beg_y - 1, floor);
+                        set_cell(x, beg_y + 1, floor);
+                    }
+                    for (int y = beg_y; y != end_y; y += y_inc) {
+                        set_cell(end_x, y, floor);
+                        set_cell(end_x + 1, y, floor);
+                        set_cell(end_x - 1, y, floor);
+                    }
+                }
+                else {
+                    /* Do y first */
+                    Godot::print("y first");
+                    for (int y = beg_y; y != end_y; y += y_inc) {
+                        set_cell(beg_x, y, floor);
+                        set_cell(beg_x + 1, y, floor);
+                        set_cell(beg_x - 1, y, floor);
+                    }
+                    for (int x = beg_x; x != end_x; x += x_inc) {
+                        set_cell(x, end_y, floor);
+                        set_cell(x, end_y - 1, floor);
+                        set_cell(x, end_y + 1, floor);
+                    }
+                }
+
+                /* Update A* */
+                walkable_cells = astar_add_walkable_cells(obstacles);
+                astar_connect_walkable_cells(walkable_cells);
+            }
+            else
+                Godot::print("True");
+
+        }
+    }
+
     update_dirty_quadrants();
 }
 
 void Map::_process(float delta) {
-
-    //bool flag = true;
     if (flag) {
         Godot::print ("I should be genereating");
 
         generate();
         flag = false;
-
-        obstacles = get_used_cells_by_id(0);
-        Array walkable_cells = astar_add_walkable_cells(obstacles);
-        astar_connect_walkable_cells(walkable_cells);
     }
+}
+
+
+bool Map::check_path(Vector2 loc1, Vector2 loc2) {
+    int ind1 = calculate_point_index(loc1);
+    int ind2 = calculate_point_index(loc2);
+    Array path = astar->get_point_path(ind1, ind2);
+    return (path.size() > 0);
 }
 
 
@@ -208,5 +302,9 @@ void Map::attack(Vector2 position, Vector2 direction, float damage){
             }
         }
     }
+}
 
+Vector2 Map::get_random_position() {
+    int start_ind = rng->randi_range(0, walkable_cells.size() - 1);
+    return walkable_cells[start_ind];
 }

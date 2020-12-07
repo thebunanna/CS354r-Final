@@ -7,6 +7,8 @@
 #include "Enemy.h"
 #include <TileSet.hpp>
 #include <AStar2D.hpp>
+#include <RandomNumberGenerator.hpp>
+
 
 namespace godot {
 
@@ -22,13 +24,16 @@ namespace godot {
 
         int tile_size = 64;
 
+        Array walkable_cells;
+
+        RandomNumberGenerator* rng;
 
         Array astar_add_walkable_cells(Array obs);
         void astar_connect_walkable_cells(Array points);
         int calculate_point_index(Vector2 point);
         bool is_outside_map_bounds(Vector2 point);
         
-        
+        bool check_path(Vector2 loc1, Vector2 loc2);
 
 
     public:
@@ -55,7 +60,10 @@ namespace godot {
         PoolVector2Array get_path(Vector2 start, Vector2 end);
 
         void _process(float delta);
+
+        Vector2 get_random_position();
     };
+
 
 }
 

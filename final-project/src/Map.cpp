@@ -2,6 +2,7 @@
 #include <ResourceLoader.hpp>
 #include <Ref.hpp>
 #include <PoolArrays.hpp>
+#include <RandomNumberGenerator.hpp>
 
 using namespace godot;
 
@@ -47,25 +48,80 @@ void Map::generate() {
     // This is where we will do the procedural generation
     clear();
 
-    map_size = Vector2(12, 12);
+    int min_x = 20;
+    int max_x = 30;
+    int min_y = 20;
+    int max_y = 30;
 
-    int tile = 0;
-    for (int y = 0; y < map_size.y; ++y) {
-        set_cell(0, y, tile);
-        set_cell(11, y, tile);
-    }
+    int min_rooms = 10;
+    int max_rooms = 20;
 
+    int room_min_x = 5;
+    int room_max_x = 10;
+    int room_min_y = 5;
+    int room_max_y = 10;
 
-    for(int x = 1; x < map_size.x - 1; x++){
-        for(int y = 1; y < map_size.y - 1; y++){
-            set_cell(x, y, 1);
+    RandomNumberGenerator* rng = RandomNumberGenerator::_new();
+    rng->randomize();
+
+    int map_x = rng->randi_range(min_x, max_x);
+    int map_y = rng->randi_range(min_y, max_y);
+    int num_rooms = rng->randi_range(min_rooms, max_rooms);
+
+    /*Godot::print("this is a thing that i want to print");
+    Godot::print("X: " + std::to_string(map_x));
+    Godot::print("Y: ");
+    Godot::print("i should have printed the thing");*/
+
+    //map_size = Vector2(12, 12);
+    map_size = Vector2(map_x, map_y);
+
+    /* Tileset */
+    int wall = 0;
+    int floor = 1;
+
+    /* Fill with walls */
+    for (int x = 0; x < map_size.x; ++x) {
+        for (int y = 0; y < map_size.y; ++y) {
+            set_cell(x, y, wall);
         }
     }
 
-    for (int x = 0; x < map_size.x; ++x) {
-        set_cell(x, 0, tile);
-        set_cell(x, 11, tile);
+    for (int r = 0; r < num_rooms; ++r) {
+        int r_x = rng->randi_range(room_min_x, room_max_x);
+        int r_y = rng->randi_range(room_min_y, room_max_y);
+
+        int room_pos_x = rng->randi_range(1, map_size.x - r_x - 1);
+        int room_pos_y = rng->randi_range(1, map_size.y - r_y - 1);
+        for (int rx = room_pos_x; rx < room_pos_x + r_x; ++rx) {
+            for (int ry = room_pos_y; ry < room_pos_y + r_y; ++ry) {
+                set_cell(rx, ry, floor);
+            }
+        }
     }
+
+
+    set_cell(1, 1, 1);
+
+    ///* Y outer walls */
+    //for (int y = 0; y < map_size.y; ++y) {
+    //    set_cell(0, y, tile);
+    //    set_cell(map_size.x-1, y, tile);
+    //}
+
+    ///* X outer walls */
+    //for (int x = 0; x < map_size.x; ++x) {
+    //    set_cell(x, 0, tile);
+    //    set_cell(x, map_size.y-1, tile);
+    //}
+
+    ///* Inner floor */
+    //for(int x = 1; x < map_size.x - 1; x++){
+    //    for(int y = 1; y < map_size.y - 1; y++){
+    //        set_cell(x, y, 1);
+    //    }
+    //}
+
     update_dirty_quadrants();
 }
 

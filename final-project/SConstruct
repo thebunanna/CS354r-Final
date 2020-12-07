@@ -1,5 +1,6 @@
 #!python
 import os, subprocess
+import glob
 
 opts = Variables([], ARGUMENTS)
 
@@ -93,12 +94,57 @@ def recursiveGlob (path):
                 ls.extend([x for x in t if x not in ls])
     return ls
 
+import re
+
+p = re.compile( 'GODOT_CLASS\s*\(\S*\,' )
+
+
+os.chdir ("src/")
+arr = glob.glob('**/*.h', recursive=True)
+
+headers = {}
+
+for paths in arr:
+    with open (paths, 'r') as file: 
+        string = file.read()         
+        m = p.search(string)
+        if m is not None:
+            matched = m.group()
+            matched = matched.replace ('GODOT_CLASS', '')
+            matched = matched.replace ('(', '')
+            matched = matched.replace (',', '')
+            headers[matched] = paths
+
+with open ("gdlibgen.h", 'w+') as file:
+    file.truncate(0)
+    file.write ("//GENERATED FILE FROM SCONS\n")
+    for key in headers:
+        file.write ("#include \""+headers[key] + "\"\n")
+    file.write ("void registerblob ();")
+
+with open ("gdlibgen.cpp", 'w+') as file:
+    file.truncate(0)
+    file.write ("//GENERATED FILE FROM SCONS\n")
+    file.write ("#include \"gdlibgen.h\"\n")
+    file.write ("#define REG(TYPE) godot::register_class<godot::TYPE>()\n")
+
+    file.write ("void registerblob () \n{\n")
+    for key in headers:
+        file.write ("\t REG("+ key + ");\n")
+    file.write ("}\n")
+
+
+os.chdir("..")
 print (recursiveGlob('src/'))
 
-sources = Glob('src/*.cpp')
-
-for paths in recursiveGlob ('src/'):
+ls = recursiveGlob ('src/')
+ls.append ("src/")
+sources = Glob("*.c")
+for paths in ls:
     sources += Glob(paths + '/*.cpp')
+
+
+
 library = env.SharedLibrary(target=env['target_path'] + env['target_name'] , source=sources)
 
 Default(library)

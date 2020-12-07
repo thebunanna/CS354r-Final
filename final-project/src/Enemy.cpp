@@ -100,7 +100,7 @@ Vector2 Enemy::get_movedir(){
     Vector2 direction = Vector2();
 
 
-    if(player_pos.distance_to(my_pos) < tile_size * 15){
+    if(player_pos.distance_to(my_pos) < tile_size * 10){
         PoolVector2Array path = get_node("/root/Main/TileMap")->call("get_path", my_pos, player_pos);
         
         Vector2 current_tile = my_pos / tile_size;

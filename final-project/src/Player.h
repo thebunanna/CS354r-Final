@@ -12,6 +12,7 @@
 #include <CollisionPolygon2D.hpp>
 #include <Color.hpp>
 #include <Area2D.hpp>
+#include "Enemy.h"
 
 namespace godot {
 

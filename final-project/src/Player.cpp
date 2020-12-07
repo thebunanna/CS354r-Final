@@ -116,9 +116,11 @@ void Player::_process(float delta) {
         check_attack();
 
         KinematicCollision2D* k = *move_and_collide(velocity);
+        
 
         if(k != NULL){
-            if(k->get_collider()->has_method("init")){
+            Enemy* e = Object::cast_to<Enemy>(k->get_collider());
+            if(e != NULL){
 
                 in_hitstun = true;
                 hitstun_timer->start();

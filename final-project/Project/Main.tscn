@@ -25,3 +25,4 @@ script = ExtResource( 3 )
 
 [node name="Enemy" parent="Enemies" instance=ExtResource( 5 )]
 position = Vector2( 639, 8 )
+script = null

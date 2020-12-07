@@ -306,5 +306,5 @@ void Map::attack(Vector2 position, Vector2 direction, float damage){
 
 Vector2 Map::get_random_position() {
     int start_ind = rng->randi_range(0, walkable_cells.size() - 1);
-    return walkable_cells[start_ind];
+    return map_to_world(walkable_cells[start_ind]);
 }

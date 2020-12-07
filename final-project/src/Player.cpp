@@ -60,6 +60,11 @@ void Player::_ready(){
 
 void Player::_process(float delta) {
 
+    if(flag){
+        set_position(get_node("/root/Main/TileMap")->call("get_random_position"));
+        flag = false;
+    }
+
     if(!dead){
         time_passed += delta;
         velocity = Vector2(0, 0);

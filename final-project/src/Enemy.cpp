@@ -48,6 +48,11 @@ void Enemy::_ready(){
 
 void Enemy::_process(float delta) {
 
+    if(flag){
+        set_position(get_node("/root/Main/TileMap")->call("get_random_position"));
+        flag = false;
+    }
+
     check_death();
 
     if(!dead){
@@ -92,22 +97,27 @@ Vector2 Enemy::get_movedir(){
     Vector2 player_pos = player->get_position().snapped(Vector2(tile_size, tile_size));
     Vector2 my_pos = get_position().snapped(Vector2(tile_size, tile_size));
 
-    PoolVector2Array path = get_node("/root/Main/TileMap")->call("get_path", my_pos, player_pos);
+    Vector2 direction = Vector2();
+
+
+    if(player_pos.distance_to(my_pos) < tile_size * 15){
+        PoolVector2Array path = get_node("/root/Main/TileMap")->call("get_path", my_pos, player_pos);
+        
+        Vector2 current_tile = my_pos / tile_size;
+
+        if(path.size() > 1)
+            direction = path[1] - current_tile;
+        else
+            direction = Vector2(0,0);
+
+        if(current_tile + direction == player_pos / tile_size)
+            direction = Vector2(0,0);
+        
+        if(direction.x != 0 && direction.y != 0)
+            direction = Vector2(0,0);
+    }
+
     
-    Vector2 current_tile = my_pos / tile_size;
-
-    Vector2 direction;
-
-    if(path.size() > 1)
-        direction = path[1] - current_tile;
-    else
-        direction = Vector2(0,0);
-
-    if(current_tile + direction == player_pos / tile_size)
-        direction = Vector2(0,0);
-    
-    if(direction.x != 0 && direction.y != 0)
-        direction = Vector2(0,0);
 
     return direction;
 }

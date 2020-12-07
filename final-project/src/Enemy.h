@@ -21,6 +21,8 @@ namespace godot {
         const float MAX_SPEED = 200;
         float speed = 0;
 
+        bool flag = true;
+
         Sprite* sprite;
         CollisionPolygon2D* hitbox;
 

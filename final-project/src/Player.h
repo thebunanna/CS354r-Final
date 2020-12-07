@@ -42,6 +42,8 @@ namespace godot {
 
         Area2D* area;
 
+        bool flag = true;
+
         void flicker();
         float curHealth;
         float maxHealth;
